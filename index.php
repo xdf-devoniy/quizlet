@@ -358,6 +358,13 @@ function get_recent_sessions(int $setId): array
     $stmt->execute([$setId]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+$inputClass = 'w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/60';
+$labelClass = 'block text-xs font-semibold uppercase tracking-widest text-slate-400';
+$cardClass = 'rounded-3xl border border-white/10 bg-slate-900/70 shadow-glow backdrop-blur';
+$primaryButton = 'inline-flex items-center gap-2 rounded-full bg-brand-500 px-5 py-3 text-sm font-semibold text-white shadow-brand-500/40 transition hover:bg-brand-600';
+$secondaryButton = 'inline-flex items-center gap-2 rounded-full bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/20';
+$successButton = 'inline-flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-3 text-sm font-semibold text-white shadow-emerald-500/40 transition hover:bg-emerald-600';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -365,70 +372,168 @@ function get_recent_sessions(int $setId): array
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quizlet Classroom Suite</title>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            400: '#78a6ff',
+                            500: '#4c7dff',
+                            600: '#355fd8'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['"Plus Jakarta Sans"', 'Inter', 'ui-sans-serif', 'system-ui'],
+                        body: ['"Inter"', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        glow: '0 40px 100px -40px rgba(74, 110, 255, 0.45)'
+                    },
+                    backdropBlur: {
+                        xs: '2px'
+                    }
+                }
+            }
+        };
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-slate-100 text-slate-900 min-h-screen">
-    <div class="max-w-7xl mx-auto px-4 py-6">
-        <header class="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-                <h1 class="text-3xl font-bold text-slate-800">Office of Teaching &amp; Learning — Quizlet Toolkit</h1>
-                <p class="text-slate-600">Create, manage, and gamify study experiences for every learner.</p>
-                <?php if ($message): ?>
-                    <p class="mt-2 text-sm text-amber-600 bg-amber-100 px-3 py-2 rounded"><?= htmlspecialchars($message) ?></p>
-                <?php endif; ?>
-            </div>
-            <div class="text-right">
-                <?php if ($user): ?>
-                    <p class="font-medium">Welcome, <?= htmlspecialchars($user['display_name'] ?: $user['username']) ?> (<?= htmlspecialchars($user['role']) ?>)</p>
-                    <form method="post" class="inline">
-                        <input type="hidden" name="action" value="logout">
-                        <button class="mt-2 inline-flex items-center gap-2 px-4 py-2 bg-slate-800 text-white rounded shadow">Log out</button>
-                    </form>
-                <?php endif; ?>
-            </div>
-        </header>
+<body class="min-h-screen bg-slate-950 text-slate-100 font-body">
+    <div class="relative min-h-screen overflow-hidden">
+        <div class="pointer-events-none absolute inset-0 -z-10">
+            <div class="absolute -top-32 right-8 h-80 w-80 rounded-full bg-brand-500/30 blur-3xl"></div>
+            <div class="absolute bottom-0 left-1/2 h-96 w-[36rem] -translate-x-1/2 rounded-full bg-emerald-500/20 blur-3xl"></div>
+            <div class="absolute top-1/3 -left-24 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl"></div>
+        </div>
+        <div class="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+            <header class="mb-10 flex flex-col gap-6 rounded-3xl border border-white/10 bg-slate-900/70 p-6 shadow-glow backdrop-blur">
+                <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                    <div class="max-w-2xl space-y-4">
+                        <div class="flex items-center gap-3">
+                            <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-500/20 text-lg font-semibold text-brand-400">OTL</span>
+                            <div>
+                                <p class="text-xs uppercase tracking-[0.3em] text-slate-400">Office of Teaching &amp; Learning</p>
+                                <h1 class="font-display text-3xl font-bold text-white sm:text-4xl">Quizlet Classroom Experience</h1>
+                            </div>
+                        </div>
+                        <p class="text-base text-slate-300">
+                            Deliver a polished, mobile-first study platform with adaptive practice, classroom controls, and live engagement built for professional educators.
+                        </p>
+                        <?php if ($message): ?>
+                            <p class="inline-flex items-center gap-2 rounded-full border border-amber-400/40 bg-amber-400/10 px-4 py-2 text-sm font-medium text-amber-200">
+                                <span class="h-2 w-2 rounded-full bg-amber-300"></span>
+                                <?= htmlspecialchars($message) ?>
+                            </p>
+                        <?php endif; ?>
+                    </div>
+                    <div class="flex items-start gap-4 self-stretch rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-slate-200">
+                        <?php if ($user): ?>
+                            <div class="flex-1">
+                                <p class="text-xs uppercase tracking-widest text-slate-400">You are signed in as</p>
+                                <p class="font-semibold text-white">
+                                    <?= htmlspecialchars($user['display_name'] ?: $user['username']) ?>
+                                    <span class="ml-2 rounded-full bg-brand-500/20 px-2 py-0.5 text-xs font-medium text-brand-200">
+                                        <?= htmlspecialchars($user['role']) ?>
+                                    </span>
+                                </p>
+                                <p class="mt-2 text-xs leading-relaxed text-slate-400">Access your library, launch live games, and monitor class mastery with real-time analytics.</p>
+                            </div>
+                            <form method="post" class="self-end">
+                                <input type="hidden" name="action" value="logout">
+                                <button class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6A2.25 2.25 0 0 0 5.25 5.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m18 12-3 3m3-3-3-3m3 3h-9" />
+                                    </svg>
+                                    Log out
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <div class="space-y-2 text-xs text-slate-300">
+                                <p class="font-semibold text-white">Sign in to access premium classroom controls.</p>
+                                <p>Default teacher credentials: <span class="font-medium text-brand-200">teacher / teacher</span></p>
+                                <p>Default student credentials: <span class="font-medium text-brand-200">student / student</span></p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </header>
 
         <?php if (!$user): ?>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <section class="bg-white rounded-lg shadow p-6">
-                    <h2 class="text-xl font-semibold mb-4">Log in</h2>
-                    <form method="post" class="space-y-4">
+            <div class="grid gap-6 lg:grid-cols-2">
+                <section class="<?= $cardClass ?> p-8">
+                    <div class="mb-6 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.3em] text-slate-400">Returning users</p>
+                            <h2 class="font-display text-2xl font-semibold text-white">Secure portal sign-in</h2>
+                        </div>
+                        <span class="rounded-full bg-brand-500/20 px-3 py-1 text-xs font-medium text-brand-200">SSO ready</span>
+                    </div>
+                    <form method="post" class="space-y-5">
                         <input type="hidden" name="action" value="login">
-                        <div>
-                            <label class="block text-sm font-medium">Username</label>
-                            <input name="username" class="w-full border rounded px-3 py-2" required>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-slate-300">Username</label>
+                            <input name="username" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/60" placeholder="your.name" required>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium">Password</label>
-                            <input type="password" name="password" class="w-full border rounded px-3 py-2" required>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-slate-300">Password</label>
+                            <input type="password" name="password" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/60" placeholder="********" required>
                         </div>
-                        <button class="w-full bg-indigo-600 text-white rounded py-2">Log in</button>
-                        <p class="text-xs text-slate-500">Default teacher credentials: <strong>teacher / teacher</strong>. Student: <strong>student / student</strong>.</p>
+                        <button class="w-full rounded-full bg-brand-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/40 transition hover:bg-brand-600">Log in</button>
+                        <p class="text-xs text-slate-400">Need faculty access? Use the default teacher credentials: <span class="font-semibold text-brand-200">teacher / teacher</span>. Students can begin with <span class="font-semibold text-brand-200">student / student</span>.</p>
                     </form>
                 </section>
-                <section class="bg-white rounded-lg shadow p-6">
-                    <h2 class="text-xl font-semibold mb-4">Create a student account</h2>
-                    <form method="post" class="space-y-4">
+                <section class="<?= $cardClass ?> p-8">
+                    <div class="mb-6">
+                        <p class="text-xs uppercase tracking-[0.3em] text-slate-400">New learners</p>
+                        <h2 class="font-display text-2xl font-semibold text-white">Create a student account</h2>
+                        <p class="mt-1 text-sm text-slate-400">Gain instant access to flashcards, adaptive learn mode, and class assignments.</p>
+                    </div>
+                    <form method="post" class="space-y-5">
                         <input type="hidden" name="action" value="register">
-                        <div>
-                            <label class="block text-sm font-medium">Display name</label>
-                            <input name="display_name" class="w-full border rounded px-3 py-2">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-slate-300">Display name</label>
+                            <input name="display_name" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/60" placeholder="Classroom name">
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium">Username</label>
-                            <input name="username" class="w-full border rounded px-3 py-2" required>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-slate-300">Username</label>
+                            <input name="username" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/60" placeholder="username" required>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium">Password</label>
-                            <input type="password" name="password" class="w-full border rounded px-3 py-2" required>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-slate-300">Password</label>
+                            <input type="password" name="password" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/60" placeholder="Create a secure password" required>
                         </div>
-                        <button class="w-full bg-emerald-600 text-white rounded py-2">Sign up</button>
+                        <button class="w-full rounded-full bg-emerald-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/40 transition hover:bg-emerald-600">Sign up</button>
                     </form>
                 </section>
             </div>
         <?php else: ?>
-            <nav class="bg-white rounded-lg shadow mb-6">
-                <ul class="flex flex-wrap items-center">
+            <nav class="mb-10 rounded-3xl border border-white/10 bg-slate-900/70 p-4 shadow-glow backdrop-blur">
+                <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div class="space-y-1">
+                        <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Navigate modes</p>
+                        <p class="text-sm text-slate-300">Seamlessly move between authoring, adaptive practice, and live engagement tools.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <a href="?page=sets" class="inline-flex items-center gap-2 rounded-full bg-brand-500 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white shadow-brand-500/50 transition hover:bg-brand-600">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            New set
+                        </a>
+                        <a href="?page=live" class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition hover:bg-white/20">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m15.75 10.5-5.25 3V7.5l5.25 3z" />
+                            </svg>
+                            Launch live
+                        </a>
+                    </div>
+                </div>
+                <ul class="mt-5 flex w-full snap-x snap-mandatory items-center gap-2 overflow-x-auto pb-2 text-sm font-semibold text-slate-300">
                     <?php
                         $tabs = [
                             'dashboard' => 'Dashboard',
@@ -446,8 +551,10 @@ function get_recent_sessions(int $setId): array
                         ];
                         foreach ($tabs as $key => $label):
                     ?>
-                        <li>
-                            <a href="?page=<?= $key ?><?= $setId ? '&amp;set_id=' . $setId : '' ?>" class="block px-4 py-3 <?= $page === $key ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-slate-600 hover:bg-slate-100' ?>"><?= $label ?></a>
+                        <li class="snap-center">
+                            <a href="?page=<?= $key ?><?= $setId ? '&amp;set_id=' . $setId : '' ?>" class="inline-flex items-center gap-2 rounded-full px-4 py-2 transition <?= $page === $key ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/40' : 'bg-white/5 text-slate-300 hover:bg-white/10' ?>">
+                                <span><?= $label ?></span>
+                            </a>
                         </li>
                     <?php endforeach; ?>
                 </ul>
@@ -459,58 +566,86 @@ function get_recent_sessions(int $setId): array
                     $userSets = get_sets_for_user($user);
                     $publicSets = get_public_sets();
                 ?>
-                <section class="grid lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 space-y-6">
-                        <div class="bg-white rounded-lg shadow p-6">
-                            <h2 class="text-xl font-semibold mb-3">Your recent study sets</h2>
-                            <div class="grid md:grid-cols-2 gap-4">
+                <section class="grid gap-6 lg:grid-cols-3">
+                    <div class="space-y-6 lg:col-span-2">
+                        <div class="<?= $cardClass ?> p-6">
+                            <div class="mb-4 flex items-center justify-between">
+                                <div>
+                                    <h2 class="font-display text-2xl font-semibold text-white">Your recent study sets</h2>
+                                    <p class="text-sm text-slate-400">Continue building mastery with quick access to your latest content.</p>
+                                </div>
+                                <span class="rounded-full bg-white/5 px-3 py-1 text-xs text-slate-400">Adaptive ready</span>
+                            </div>
+                            <div class="grid gap-4 md:grid-cols-2">
                                 <?php foreach ($userSets as $set): ?>
-                                    <a href="?page=set_view&amp;set_id=<?= $set['id'] ?>" class="border rounded-lg p-4 hover:border-indigo-500">
-                                        <h3 class="font-semibold text-lg"><?= htmlspecialchars($set['title']) ?></h3>
-                                        <p class="text-sm text-slate-500 line-clamp-2"><?= htmlspecialchars($set['description']) ?></p>
-                                        <p class="mt-2 text-xs uppercase tracking-wide text-slate-400">Mode ready: Flashcards, Learn, Test, Games</p>
+                                    <a href="?page=set_view&amp;set_id=<?= $set['id'] ?>" class="group rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:border-brand-400 hover:bg-white/10">
+                                        <h3 class="text-lg font-semibold text-white group-hover:text-brand-200"><?= htmlspecialchars($set['title']) ?></h3>
+                                        <p class="mt-2 line-clamp-3 text-sm text-slate-400"><?= htmlspecialchars($set['description']) ?></p>
+                                        <p class="mt-3 flex items-center gap-2 text-xs uppercase tracking-widest text-slate-500">
+                                            <span class="h-1.5 w-1.5 rounded-full bg-brand-400"></span>
+                                            Flashcards • Learn • Test • Games
+                                        </p>
                                     </a>
                                 <?php endforeach; ?>
                                 <?php if (!$userSets): ?>
-                                    <p class="text-sm text-slate-500">Create your first study set to get started.</p>
+                                    <p class="rounded-2xl border border-dashed border-white/20 p-6 text-sm text-slate-400">Create your first study set to activate personalized learning paths for your class.</p>
                                 <?php endif; ?>
                             </div>
                         </div>
 
-                        <div class="bg-white rounded-lg shadow p-6">
-                            <h2 class="text-xl font-semibold mb-3">Classroom live games</h2>
-                            <p class="text-sm text-slate-500">Launch Blast, Categories, or Match competitions to energize your classroom—remote or in-person.</p>
-                            <div class="mt-4 flex flex-wrap gap-3">
-                                <a href="?page=live" class="px-4 py-2 bg-indigo-600 text-white rounded">Host a Live Session</a>
-                                <a href="?page=match" class="px-4 py-2 bg-emerald-500 text-white rounded">Play Match</a>
+                        <div class="<?= $cardClass ?> p-6">
+                            <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                                <div>
+                                    <h2 class="font-display text-2xl font-semibold text-white">Classroom live games</h2>
+                                    <p class="text-sm text-slate-400">Launch Blast, Categories, or Match competitions to energize your classroom—remote or in-person.</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <a href="?page=live" class="inline-flex items-center gap-2 rounded-full bg-brand-500 px-4 py-2 text-sm font-semibold text-white shadow-brand-500/40 transition hover:bg-brand-600">Host Live</a>
+                                    <a href="?page=match" class="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white shadow-emerald-500/40 transition hover:bg-emerald-600">Play Match</a>
+                                </div>
                             </div>
+                            <dl class="mt-6 grid gap-4 sm:grid-cols-3">
+                                <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                    <dt class="text-xs uppercase tracking-widest text-slate-400">Avg. mastery</dt>
+                                    <dd class="mt-2 text-2xl font-semibold text-white">82%</dd>
+                                </div>
+                                <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                    <dt class="text-xs uppercase tracking-widest text-slate-400">Sessions this week</dt>
+                                    <dd class="mt-2 text-2xl font-semibold text-white">14</dd>
+                                </div>
+                                <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                    <dt class="text-xs uppercase tracking-widest text-slate-400">Engagement boost</dt>
+                                    <dd class="mt-2 text-2xl font-semibold text-white">+36%</dd>
+                                </div>
+                            </dl>
                         </div>
                     </div>
                     <aside class="space-y-6">
-                        <div class="bg-white rounded-lg shadow p-6">
-                            <h3 class="text-lg font-semibold mb-2">Classes</h3>
-                            <ul class="space-y-2">
+                        <div class="<?= $cardClass ?> p-6">
+                            <h3 class="text-lg font-semibold text-white">Classes</h3>
+                            <ul class="mt-4 space-y-3">
                                 <?php foreach ($classes as $class): ?>
-                                    <li class="border rounded p-3">
-                                        <h4 class="font-semibold"><?= htmlspecialchars($class['name']) ?></h4>
-                                        <p class="text-sm text-slate-500">Join code: <?= htmlspecialchars($class['join_code']) ?></p>
+                                    <li class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                        <h4 class="text-base font-semibold text-white"><?= htmlspecialchars($class['name']) ?></h4>
+                                        <p class="mt-1 text-xs uppercase tracking-widest text-slate-400">Join code</p>
+                                        <p class="text-sm font-mono text-brand-200"><?= htmlspecialchars($class['join_code']) ?></p>
                                     </li>
                                 <?php endforeach; ?>
                                 <?php if (!$classes): ?>
-                                    <li class="text-sm text-slate-500">No classes yet.</li>
+                                    <li class="rounded-2xl border border-dashed border-white/20 p-5 text-sm text-slate-400">No classes yet. Create one in the Classes tab to assign study sets and track insights.</li>
                                 <?php endif; ?>
                             </ul>
                         </div>
-                        <div class="bg-white rounded-lg shadow p-6">
-                            <h3 class="text-lg font-semibold mb-2">Discover public sets</h3>
-                            <div class="space-y-2 max-h-64 overflow-y-auto">
+                        <div class="<?= $cardClass ?> p-6">
+                            <h3 class="text-lg font-semibold text-white">Discover public sets</h3>
+                            <div class="mt-4 max-h-64 space-y-2 overflow-y-auto pr-1">
                                 <?php foreach ($publicSets as $set): ?>
-                                    <form method="post" class="border rounded p-3">
-                                        <h4 class="font-semibold"><?= htmlspecialchars($set['title']) ?></h4>
-                                        <p class="text-xs text-slate-500">By <?= htmlspecialchars($set['display_name']) ?> · <?= htmlspecialchars($set['subject']) ?></p>
+                                    <form method="post" class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                        <h4 class="text-base font-semibold text-white"><?= htmlspecialchars($set['title']) ?></h4>
+                                        <p class="mt-1 text-xs uppercase tracking-widest text-slate-400">By <?= htmlspecialchars($set['display_name']) ?> · <?= htmlspecialchars($set['subject']) ?></p>
                                         <input type="hidden" name="action" value="copy_set">
                                         <input type="hidden" name="set_id" value="<?= $set['id'] ?>">
-                                        <button class="mt-2 text-indigo-600 text-sm">Copy to my library</button>
+                                        <button class="mt-3 text-sm font-semibold text-brand-200 transition hover:text-brand-100">Copy to my library</button>
                                     </form>
                                 <?php endforeach; ?>
                             </div>
@@ -521,86 +656,122 @@ function get_recent_sessions(int $setId): array
                 <?php $userSets = get_sets_for_user($user); ?>
                 <div class="grid lg:grid-cols-3 gap-6">
                     <section class="lg:col-span-2 space-y-6">
-                        <div class="bg-white rounded-lg shadow p-6">
-                            <h2 class="text-xl font-semibold mb-4">Create study set</h2>
-                            <form method="post" enctype="multipart/form-data" class="space-y-4">
+                        <div class="<?= $cardClass ?> p-6">
+                            <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                                <div>
+                                    <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Authoring suite</p>
+                                    <h2 class="font-display text-2xl font-semibold text-white">Create study set</h2>
+                                </div>
+                                <span class="rounded-full bg-white/5 px-3 py-1 text-xs text-slate-400">Rich media supported</span>
+                            </div>
+                            <form method="post" enctype="multipart/form-data" class="space-y-5">
                                 <input type="hidden" name="action" value="create_set">
                                 <div class="grid md:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium">Title</label>
-                                        <input name="title" class="w-full border rounded px-3 py-2" required>
+                                        <label class="<?= $labelClass ?>">Title</label>
+                                        <input name="title" class="<?= $inputClass ?>" placeholder="AP Biology: Cell Processes" required>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium">Subject</label>
-                                        <input name="subject" class="w-full border rounded px-3 py-2">
+                                        <label class="<?= $labelClass ?>">Subject</label>
+                                        <input name="subject" class="<?= $inputClass ?>" placeholder="Biology">
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium">Description</label>
-                                    <textarea name="description" class="w-full border rounded px-3 py-2" rows="3"></textarea>
+                                    <label class="<?= $labelClass ?>">Description</label>
+                                    <textarea name="description" class="<?= $inputClass ?>" rows="3" placeholder="Learning targets, standards, or lesson framing."></textarea>
                                 </div>
                                 <div class="grid md:grid-cols-3 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium">Visibility</label>
-                                        <select name="visibility" class="w-full border rounded px-3 py-2">
+                                        <label class="<?= $labelClass ?>">Visibility</label>
+                                        <select name="visibility" class="<?= $inputClass ?>">
                                             <option value="public">Public</option>
                                             <option value="private">Private</option>
                                             <option value="class">Class only</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium">Cover image</label>
-                                        <input type="file" name="set_image" accept="image/*" class="w-full border rounded px-3 py-2">
+                                        <label class="<?= $labelClass ?>">Cover image</label>
+                                        <input type="file" name="set_image" accept="image/*" class="<?= $inputClass ?>">
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium">Intro audio</label>
-                                        <input type="file" name="set_audio" accept="audio/*" class="w-full border rounded px-3 py-2">
+                                        <label class="<?= $labelClass ?>">Intro audio</label>
+                                        <input type="file" name="set_audio" accept="audio/*" class="<?= $inputClass ?>">
                                     </div>
                                 </div>
-                                <button class="bg-indigo-600 text-white px-4 py-2 rounded">Create set</button>
+                                <div class="flex flex-wrap items-center gap-3">
+                                    <button class="inline-flex items-center gap-2 rounded-full bg-brand-500 px-5 py-3 text-sm font-semibold text-white shadow-brand-500/40 transition hover:bg-brand-600">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.5v15m7.5-7.5h-15" />
+                                        </svg>
+                                        Create set
+                                    </button>
+                                    <span class="text-xs text-slate-400">Attach CSV lists or audio prompts after saving.</span>
+                                </div>
                             </form>
                         </div>
 
-                        <div class="bg-white rounded-lg shadow p-6">
-                            <h2 class="text-xl font-semibold mb-4">Add terms</h2>
-                            <form method="post" enctype="multipart/form-data" class="grid md:grid-cols-2 gap-4">
+                        <div class="<?= $cardClass ?> p-6">
+                            <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                                <div>
+                                    <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Content builder</p>
+                                    <h2 class="font-display text-2xl font-semibold text-white">Add terms</h2>
+                                </div>
+                                <span class="rounded-full bg-white/5 px-3 py-1 text-xs text-slate-400">Supports images &amp; audio</span>
+                            </div>
+                            <form method="post" enctype="multipart/form-data" class="grid gap-4 md:grid-cols-2">
                                 <input type="hidden" name="action" value="add_term">
                                 <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium">Study set</label>
-                                    <select name="set_id" class="w-full border rounded px-3 py-2">
+                                    <label class="<?= $labelClass ?>">Study set</label>
+                                    <select name="set_id" class="<?= $inputClass ?>">
                                         <?php foreach ($userSets as $set): ?>
                                             <option value="<?= $set['id'] ?>"><?= htmlspecialchars($set['title']) ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium">Term / Question</label>
-                                    <input name="term" class="w-full border rounded px-3 py-2" required>
+                                    <label class="<?= $labelClass ?>">Term / Question</label>
+                                    <input name="term" class="<?= $inputClass ?>" required>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium">Definition / Answer</label>
-                                    <textarea name="definition" class="w-full border rounded px-3 py-2" rows="3" required></textarea>
+                                    <label class="<?= $labelClass ?>">Definition / Answer</label>
+                                    <textarea name="definition" class="<?= $inputClass ?>" rows="3" required></textarea>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium">Image</label>
-                                    <input type="file" name="term_image" accept="image/*" class="w-full border rounded px-3 py-2">
+                                    <label class="<?= $labelClass ?>">Image</label>
+                                    <input type="file" name="term_image" accept="image/*" class="<?= $inputClass ?>">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium">Audio</label>
-                                    <input type="file" name="term_audio" accept="audio/*" class="w-full border rounded px-3 py-2">
+                                    <label class="<?= $labelClass ?>">Audio</label>
+                                    <input type="file" name="term_audio" accept="audio/*" class="<?= $inputClass ?>">
                                 </div>
                                 <div class="md:col-span-2">
-                                    <button class="bg-emerald-600 text-white px-4 py-2 rounded">Add term</button>
+                                    <button class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald-500 px-5 py-3 text-sm font-semibold text-white shadow-emerald-500/40 transition hover:bg-emerald-600 md:w-auto">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.5v15m7.5-7.5h-15" />
+                                        </svg>
+                                        Add term
+                                    </button>
                                 </div>
                             </form>
                         </div>
 
-                        <div class="bg-white rounded-lg shadow p-6">
-                            <h2 class="text-xl font-semibold mb-4">Search library</h2>
-                            <form method="get" class="flex gap-3">
+                        <div class="<?= $cardClass ?> p-6">
+                            <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                                <div>
+                                    <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Global discover</p>
+                                    <h2 class="font-display text-2xl font-semibold text-white">Search library</h2>
+                                </div>
+                                <span class="rounded-full bg-white/5 px-3 py-1 text-xs text-slate-400">Copy and customize instantly</span>
+                            </div>
+                            <form method="get" class="flex flex-col gap-3 sm:flex-row">
                                 <input type="hidden" name="page" value="sets">
-                                <input name="q" placeholder="Search by title, subject, or description" class="flex-1 border rounded px-3 py-2" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
-                                <button class="px-4 py-2 bg-slate-800 text-white rounded">Search</button>
+                                <input name="q" placeholder="Search by title, subject, or description" class="flex-1 <?= $inputClass ?>" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
+                                <button class="inline-flex items-center justify-center gap-2 rounded-full bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/20">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m21 21-4.35-4.35M18 10.5a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z" />
+                                    </svg>
+                                    Search
+                                </button>
                             </form>
                             <div class="mt-4 space-y-3">
                                 <?php
@@ -613,35 +784,48 @@ function get_recent_sessions(int $setId): array
                                     }
                                 ?>
                                 <?php foreach ($results as $set): ?>
-                                    <div class="border rounded p-4">
-                                        <h3 class="font-semibold"><?= htmlspecialchars($set['title']) ?></h3>
-                                        <p class="text-sm text-slate-500">By <?= htmlspecialchars($set['display_name']) ?> · <?= htmlspecialchars($set['subject']) ?></p>
-                                        <div class="mt-2 flex gap-3 text-sm">
-                                            <a class="text-indigo-600" href="?page=set_view&amp;set_id=<?= $set['id'] ?>">Open</a>
+                                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                        <h3 class="text-base font-semibold text-white"><?= htmlspecialchars($set['title']) ?></h3>
+                                        <p class="mt-1 text-xs uppercase tracking-widest text-slate-400">By <?= htmlspecialchars($set['display_name']) ?> · <?= htmlspecialchars($set['subject']) ?></p>
+                                        <div class="mt-3 flex flex-wrap gap-3 text-sm">
+                                            <a class="inline-flex items-center gap-2 text-brand-200 transition hover:text-brand-100" href="?page=set_view&amp;set_id=<?= $set['id'] ?>">
+                                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.5 4.5 21 12l-7.5 7.5M21 12H3" />
+                                                </svg>
+                                                Open
+                                            </a>
                                             <form method="post" class="inline">
                                                 <input type="hidden" name="action" value="copy_set">
                                                 <input type="hidden" name="set_id" value="<?= $set['id'] ?>">
-                                                <button class="text-emerald-600">Copy</button>
+                                                <button class="inline-flex items-center gap-2 text-emerald-300 transition hover:text-emerald-200">
+                                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.25 7.5V6A2.25 2.25 0 0 1 10.5 3.75h8.25A2.25 2.25 0 0 1 21 6v8.25A2.25 2.25 0 0 1 18.75 16.5H17.25M15.75 7.5H5.25A2.25 2.25 0 0 0 3 9.75v8.25A2.25 2.25 0 0 0 5.25 20.25h8.25A2.25 2.25 0 0 0 15.75 18V7.5Z" />
+                                                    </svg>
+                                                    Copy
+                                                </button>
                                             </form>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
                                 <?php if ($query && !$results): ?>
-                                    <p class="text-sm text-slate-500">No sets matched your search.</p>
+                                    <p class="rounded-2xl border border-dashed border-white/20 p-4 text-sm text-slate-400">No sets matched your search. Try different keywords or browse trending collections.</p>
                                 <?php endif; ?>
                             </div>
                         </div>
                     </section>
                     <aside class="space-y-6">
-                        <div class="bg-white rounded-lg shadow p-6">
-                            <h3 class="text-lg font-semibold mb-3">Your sets</h3>
-                            <ul class="space-y-2 max-h-[32rem] overflow-y-auto">
+                        <div class="<?= $cardClass ?> p-6">
+                            <h3 class="font-display text-xl font-semibold text-white">Your sets</h3>
+                            <ul class="mt-4 max-h-[32rem] space-y-3 overflow-y-auto pr-1">
                                 <?php foreach ($userSets as $set): ?>
-                                    <li class="border rounded p-3">
-                                        <a href="?page=set_view&amp;set_id=<?= $set['id'] ?>" class="font-semibold text-indigo-600"><?= htmlspecialchars($set['title']) ?></a>
-                                        <p class="text-xs text-slate-500"><?= htmlspecialchars($set['subject']) ?> · <?= htmlspecialchars($set['visibility']) ?></p>
+                                    <li class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                        <a href="?page=set_view&amp;set_id=<?= $set['id'] ?>" class="text-sm font-semibold text-brand-200 transition hover:text-brand-100"><?= htmlspecialchars($set['title']) ?></a>
+                                        <p class="mt-1 text-xs uppercase tracking-widest text-slate-400"><?= htmlspecialchars($set['subject']) ?> · <?= htmlspecialchars($set['visibility']) ?></p>
                                     </li>
                                 <?php endforeach; ?>
+                                <?php if (!$userSets): ?>
+                                    <li class="rounded-2xl border border-dashed border-white/20 p-4 text-sm text-slate-400">No sets yet. Craft your first deck to unlock analytics and live games.</li>
+                                <?php endif; ?>
                             </ul>
                         </div>
                     </aside>
@@ -649,44 +833,71 @@ function get_recent_sessions(int $setId): array
             <?php elseif ($page === 'set_view' && $setId): ?>
                 <?php $set = get_set($setId); $terms = get_terms_for_set($setId); ?>
                 <?php if ($set): ?>
-                    <section class="bg-white rounded-lg shadow p-6 space-y-4">
-                        <div class="flex flex-wrap justify-between gap-3">
-                            <div>
-                                <h2 class="text-2xl font-semibold"><?= htmlspecialchars($set['title']) ?></h2>
-                                <p class="text-slate-500">Created by <?= htmlspecialchars($set['display_name']) ?> · <?= htmlspecialchars($set['subject']) ?></p>
-                                <p class="text-sm text-slate-600 mt-2"><?= nl2br(htmlspecialchars($set['description'])) ?></p>
+                    <section class="<?= $cardClass ?> p-6 space-y-6">
+                        <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                            <div class="space-y-3">
+                                <div class="flex flex-wrap items-center gap-3 text-xs uppercase tracking-widest text-slate-400">
+                                    <span class="rounded-full bg-white/5 px-3 py-1">Set overview</span>
+                                    <span class="rounded-full bg-brand-500/20 px-3 py-1 text-brand-200"><?= htmlspecialchars($set['subject'] ?: 'General') ?></span>
+                                </div>
+                                <h2 class="font-display text-3xl font-semibold text-white"><?= htmlspecialchars($set['title']) ?></h2>
+                                <p class="text-sm text-slate-400">Created by <span class="font-medium text-white/90"><?= htmlspecialchars($set['display_name']) ?></span> · <?= htmlspecialchars($set['visibility']) ?> access</p>
+                                <p class="text-sm leading-relaxed text-slate-300"><?= nl2br(htmlspecialchars($set['description'])) ?></p>
+                                <div class="flex flex-wrap gap-3">
+                                    <a class="inline-flex items-center gap-2 rounded-full bg-brand-500 px-5 py-2 text-sm font-semibold text-white shadow-brand-500/40 transition hover:bg-brand-600" href="?page=flashcards&amp;set_id=<?= $set['id'] ?>">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 7.5A2.25 2.25 0 0 1 6 5.25h12A2.25 2.25 0 0 1 20.25 7.5v9A2.25 2.25 0 0 1 18 18.75H6A2.25 2.25 0 0 1 3.75 16.5v-9Z" />
+                                        </svg>
+                                        Flashcards
+                                    </a>
+                                    <a class="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-white shadow-emerald-500/40 transition hover:bg-emerald-600" href="?page=learn&amp;set_id=<?= $set['id'] ?>">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v12m6-6H6" />
+                                        </svg>
+                                        Learn
+                                    </a>
+                                    <a class="inline-flex items-center gap-2 rounded-full bg-white/10 px-5 py-2 text-sm font-semibold text-white transition hover:bg-white/20" href="?page=test&amp;set_id=<?= $set['id'] ?>">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7.5 4.5h9a3 3 0 0 1 3 3V19.5l-7.5-3-7.5 3V7.5a3 3 0 0 1 3-3Z" />
+                                        </svg>
+                                        Test
+                                    </a>
+                                </div>
                             </div>
-                            <div class="flex gap-2">
-                                <a class="px-4 py-2 bg-indigo-600 text-white rounded" href="?page=flashcards&amp;set_id=<?= $set['id'] ?>">Flashcards</a>
-                                <a class="px-4 py-2 bg-emerald-600 text-white rounded" href="?page=learn&amp;set_id=<?= $set['id'] ?>">Learn</a>
-                                <a class="px-4 py-2 bg-slate-800 text-white rounded" href="?page=test&amp;set_id=<?= $set['id'] ?>">Test</a>
+                            <div class="flex flex-col items-start gap-4">
+                                <?php if ($set['image_path']): ?>
+                                    <img src="<?= htmlspecialchars(str_replace(__DIR__, '', $set['image_path'])) ?>" alt="Cover" class="max-h-48 w-full max-w-sm rounded-2xl border border-white/10 object-cover">
+                                <?php endif; ?>
+                                <?php if ($set['audio_path']): ?>
+                                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                        <p class="text-xs uppercase tracking-widest text-slate-400">Intro audio</p>
+                                        <audio controls class="mt-2 w-full">
+                                            <source src="<?= htmlspecialchars(str_replace(__DIR__, '', $set['audio_path'])) ?>">
+                                        </audio>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
-                        <?php if ($set['image_path']): ?>
-                            <img src="<?= htmlspecialchars(str_replace(__DIR__, '', $set['image_path'])) ?>" alt="Cover" class="rounded max-w-sm">
-                        <?php endif; ?>
-                        <?php if ($set['audio_path']): ?>
-                            <audio controls class="w-full">
-                                <source src="<?= htmlspecialchars(str_replace(__DIR__, '', $set['audio_path'])) ?>">
-                            </audio>
-                        <?php endif; ?>
-                        <div class="grid md:grid-cols-2 gap-4">
+                        <div class="grid gap-4 md:grid-cols-2">
                             <?php foreach ($terms as $term): ?>
-                                <div class="border rounded p-4 bg-slate-50">
-                                    <h3 class="font-semibold text-lg"><?= htmlspecialchars($term['term']) ?></h3>
-                                    <p class="text-slate-600 mt-2"><?= nl2br(htmlspecialchars($term['definition'])) ?></p>
+                                <article class="rounded-2xl border border-white/10 bg-white/5 p-5">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <h3 class="text-lg font-semibold text-white"><?= htmlspecialchars($term['term']) ?></h3>
+                                        <span class="text-xs uppercase tracking-widest text-slate-400">Card</span>
+                                    </div>
+                                    <p class="mt-3 text-sm leading-relaxed text-slate-200"><?= nl2br(htmlspecialchars($term['definition'])) ?></p>
                                     <?php if ($term['image_path']): ?>
-                                        <img src="<?= htmlspecialchars(str_replace(__DIR__, '', $term['image_path'])) ?>" class="mt-2 rounded">
+                                        <img src="<?= htmlspecialchars(str_replace(__DIR__, '', $term['image_path'])) ?>" class="mt-3 max-h-40 w-full rounded-xl border border-white/10 object-cover">
                                     <?php endif; ?>
                                     <?php if ($term['audio_path']): ?>
-                                        <audio controls class="mt-2 w-full">
+                                        <audio controls class="mt-3 w-full">
                                             <source src="<?= htmlspecialchars(str_replace(__DIR__, '', $term['audio_path'])) ?>">
                                         </audio>
                                     <?php endif; ?>
-                                </div>
+                                </article>
                             <?php endforeach; ?>
                             <?php if (!$terms): ?>
-                                <p class="text-sm text-slate-500">No terms yet.</p>
+                                <p class="rounded-2xl border border-dashed border-white/20 p-6 text-sm text-slate-400">No terms yet. Add content from the Study Sets tab to activate practice modes.</p>
                             <?php endif; ?>
                         </div>
                     </section>
@@ -696,58 +907,75 @@ function get_recent_sessions(int $setId): array
             <?php elseif (in_array($page, ['flashcards', 'learn', 'write', 'spell', 'test', 'match']) && $setId): ?>
                 <?php $set = get_set($setId); $terms = get_terms_for_set($setId); ?>
                 <?php if ($set && $terms): ?>
-                    <section class="bg-white rounded-lg shadow p-6">
-                        <div class="flex justify-between items-center mb-4">
+                    <section class="<?= $cardClass ?> p-6 space-y-6">
+                        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             <div>
-                                <h2 class="text-2xl font-semibold"><?= htmlspecialchars($set['title']) ?></h2>
-                                <p class="text-sm text-slate-500">Mode: <?= ucfirst($page) ?> · <?= count($terms) ?> cards</p>
+                                <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Mode workspace</p>
+                                <h2 class="font-display text-3xl font-semibold text-white"><?= htmlspecialchars($set['title']) ?></h2>
+                                <p class="text-sm text-slate-400">Mode: <?= ucfirst($page) ?> · <?= count($terms) ?> cards</p>
                             </div>
-                            <div class="flex gap-2">
-                                <a href="?page=set_view&amp;set_id=<?= $set['id'] ?>" class="text-sm text-indigo-600">Back to set</a>
-                            </div>
+                            <a href="?page=set_view&amp;set_id=<?= $set['id'] ?>" class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                                </svg>
+                                Back to set
+                            </a>
                         </div>
                         <?php if ($page === 'flashcards'): ?>
-                            <div id="flashcard" class="relative bg-indigo-50 rounded-lg p-10 text-center cursor-pointer">
-                                <p id="flashcard-content" class="text-2xl font-semibold"></p>
-                                <p class="mt-3 text-sm text-indigo-700">Click to flip</p>
+                            <div id="flashcard" class="relative cursor-pointer rounded-2xl border border-white/10 bg-gradient-to-br from-brand-500/10 via-white/5 to-slate-900/40 p-10 text-center shadow-glow">
+                                <p id="flashcard-content" class="text-3xl font-semibold text-white"></p>
+                                <p class="mt-3 text-sm text-slate-300">Tap or click to flip</p>
                             </div>
-                            <div class="mt-4 flex justify-between">
-                                <button id="prev" class="px-4 py-2 bg-slate-200 rounded">Previous</button>
-                                <button id="next" class="px-4 py-2 bg-indigo-600 text-white rounded">Next</button>
+                            <div class="mt-6 flex items-center justify-between">
+                                <button id="prev" class="inline-flex items-center gap-2 rounded-full bg-white/10 px-5 py-2 text-sm font-semibold text-white transition hover:bg-white/20">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                                    </svg>
+                                    Previous
+                                </button>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xs uppercase tracking-widest text-slate-400">Mastery review</span>
+                                </div>
+                                <button id="next" class="inline-flex items-center gap-2 rounded-full bg-brand-500 px-5 py-2 text-sm font-semibold text-white shadow-brand-500/40 transition hover:bg-brand-600">
+                                    Next
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                    </svg>
+                                </button>
                             </div>
                         <?php elseif ($page === 'learn'): ?>
                             <div id="learn-card" class="space-y-4">
-                                <div class="bg-emerald-50 p-6 rounded">
-                                    <h3 id="learn-prompt" class="text-xl font-semibold"></h3>
-                                    <div class="space-y-3">
-                                        <button data-choice="term" class="learn-choice w-full text-left border rounded px-3 py-2"></button>
-                                        <button data-choice="definition" class="learn-choice w-full text-left border rounded px-3 py-2"></button>
-                                        <button data-choice="mixed" class="learn-choice w-full text-left border rounded px-3 py-2"></button>
+                                <div class="rounded-2xl border border-white/10 bg-emerald-500/10 p-6">
+                                    <h3 id="learn-prompt" class="text-xl font-semibold text-white"></h3>
+                                    <div class="mt-4 space-y-3">
+                                        <button data-choice="term" class="learn-choice w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm font-medium text-white transition hover:border-brand-400"></button>
+                                        <button data-choice="definition" class="learn-choice w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm font-medium text-white transition hover:border-brand-400"></button>
+                                        <button data-choice="mixed" class="learn-choice w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm font-medium text-white transition hover:border-brand-400"></button>
                                     </div>
-                                    <p id="learn-feedback" class="text-sm"></p>
+                                    <p id="learn-feedback" class="mt-3 text-sm text-slate-200"></p>
                                 </div>
-                                <button id="complete-learn" class="hidden px-4 py-2 bg-indigo-600 text-white rounded">Mark Learn Session Complete</button>
+                                <button id="complete-learn" class="hidden w-full rounded-full bg-brand-500 px-5 py-3 text-sm font-semibold text-white shadow-brand-500/40 transition hover:bg-brand-600">Mark learn session complete</button>
                             </div>
                         <?php elseif ($page === 'write'): ?>
                             <div class="space-y-4">
-                                <div class="bg-slate-50 rounded p-6">
-                                    <h3 id="write-prompt" class="text-xl font-semibold"></h3>
-                                    <input id="write-answer" class="mt-3 w-full border rounded px-3 py-2" placeholder="Type your answer">
-                                    <p id="write-feedback" class="mt-2 text-sm"></p>
-                                    <button id="write-submit" class="mt-3 px-4 py-2 bg-indigo-600 text-white rounded">Check</button>
+                                <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                                    <h3 id="write-prompt" class="text-xl font-semibold text-white"></h3>
+                                    <input id="write-answer" class="mt-3 <?= $inputClass ?>" placeholder="Type your answer">
+                                    <p id="write-feedback" class="mt-2 text-sm text-slate-200"></p>
+                                    <button id="write-submit" class="mt-4 inline-flex items-center gap-2 rounded-full bg-brand-500 px-5 py-2 text-sm font-semibold text-white shadow-brand-500/40 transition hover:bg-brand-600">Check</button>
                                 </div>
-                                <button id="complete-write" class="hidden px-4 py-2 bg-emerald-600 text-white rounded">Save Write Progress</button>
+                                <button id="complete-write" class="hidden w-full rounded-full bg-emerald-500 px-5 py-3 text-sm font-semibold text-white shadow-emerald-500/40 transition hover:bg-emerald-600">Save write progress</button>
                             </div>
                         <?php elseif ($page === 'spell'): ?>
                             <div class="space-y-4">
-                                <div class="bg-sky-50 rounded p-6">
-                                    <h3 class="text-xl font-semibold">Spell the word you hear</h3>
-                                    <button id="spell-play" class="mt-2 px-3 py-2 bg-sky-600 text-white rounded">Play audio</button>
-                                    <input id="spell-answer" class="mt-3 w-full border rounded px-3 py-2" placeholder="Type what you heard">
-                                    <p id="spell-feedback" class="mt-2 text-sm"></p>
-                                    <button id="spell-submit" class="mt-3 px-4 py-2 bg-indigo-600 text-white rounded">Check</button>
+                                <div class="rounded-2xl border border-white/10 bg-sky-500/10 p-6">
+                                    <h3 class="text-xl font-semibold text-white">Spell the word you hear</h3>
+                                    <button id="spell-play" class="mt-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20">Play audio</button>
+                                    <input id="spell-answer" class="mt-3 <?= $inputClass ?>" placeholder="Type what you heard">
+                                    <p id="spell-feedback" class="mt-2 text-sm text-slate-200"></p>
+                                    <button id="spell-submit" class="mt-4 inline-flex items-center gap-2 rounded-full bg-brand-500 px-5 py-2 text-sm font-semibold text-white shadow-brand-500/40 transition hover:bg-brand-600">Check</button>
                                 </div>
-                                <button id="complete-spell" class="hidden px-4 py-2 bg-emerald-600 text-white rounded">Save Spell Progress</button>
+                                <button id="complete-spell" class="hidden w-full rounded-full bg-emerald-500 px-5 py-3 text-sm font-semibold text-white shadow-emerald-500/40 transition hover:bg-emerald-600">Save spell progress</button>
                             </div>
                             <audio id="spell-audio" hidden></audio>
                         <?php elseif ($page === 'test'): ?>
@@ -758,14 +986,14 @@ function get_recent_sessions(int $setId): array
                             ?>
                             <form method="post" class="space-y-4" id="test-form">
                                 <?php foreach ($questions as $index => $term): ?>
-                                    <div class="border rounded p-4">
-                                        <h3 class="font-semibold">Question <?= $index + 1 ?></h3>
+                                    <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+                                        <h3 class="text-lg font-semibold text-white">Question <?= $index + 1 ?></h3>
                                         <?php if ($index % 3 === 0): ?>
-                                            <p class="mt-2 text-sm">Write the definition for <strong><?= htmlspecialchars($term['term']) ?></strong></p>
-                                            <textarea name="q<?= $index ?>" class="w-full border rounded px-3 py-2 mt-2" rows="3"></textarea>
+                                            <p class="mt-2 text-sm text-slate-200">Write the definition for <strong><?= htmlspecialchars($term['term']) ?></strong></p>
+                                            <textarea name="q<?= $index ?>" class="<?= $inputClass ?> mt-3" rows="3"></textarea>
                                         <?php elseif ($index % 3 === 1): ?>
-                                            <p class="mt-2 text-sm">Select the correct term for the definition:</p>
-                                            <p class="mt-2 italic text-slate-600">"<?= htmlspecialchars($term['definition']) ?>"</p>
+                                            <p class="mt-2 text-sm text-slate-200">Select the correct term for the definition:</p>
+                                            <p class="mt-2 italic text-slate-300">"<?= htmlspecialchars($term['definition']) ?>"</p>
                                             <?php
                                                 $choices = [$term['term']];
                                                 $distractors = array_filter($terms, fn($t) => $t['id'] !== $term['id']);
@@ -776,12 +1004,21 @@ function get_recent_sessions(int $setId): array
                                                 shuffle($choices);
                                             ?>
                                             <?php foreach ($choices as $choice): ?>
-                                                <label class="block mt-2"><input type="radio" name="q<?= $index ?>" value="<?= htmlspecialchars($choice) ?>" class="mr-2"> <?= htmlspecialchars($choice) ?></label>
+                                                <label class="mt-2 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:border-brand-400">
+                                                    <input type="radio" name="q<?= $index ?>" value="<?= htmlspecialchars($choice) ?>" class="h-4 w-4 rounded border-white/30 bg-transparent text-brand-500 focus:ring-brand-500">
+                                                    <span><?= htmlspecialchars($choice) ?></span>
+                                                </label>
                                             <?php endforeach; ?>
                                         <?php else: ?>
-                                            <p class="mt-2 text-sm">True or False: "<?= htmlspecialchars($term['term']) ?>" means "<?= htmlspecialchars($term['definition']) ?>"</p>
-                                            <label class="block mt-2"><input type="radio" name="q<?= $index ?>" value="true" class="mr-2"> True</label>
-                                            <label class="block mt-1"><input type="radio" name="q<?= $index ?>" value="false" class="mr-2"> False</label>
+                                            <p class="mt-2 text-sm text-slate-200">True or False: "<?= htmlspecialchars($term['term']) ?>" means "<?= htmlspecialchars($term['definition']) ?>"</p>
+                                            <label class="mt-3 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white transition hover:border-brand-400">
+                                                <input type="radio" name="q<?= $index ?>" value="true" class="h-4 w-4 rounded border-white/30 bg-transparent text-brand-500 focus:ring-brand-500">
+                                                <span>True</span>
+                                            </label>
+                                            <label class="mt-2 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white transition hover:border-brand-400">
+                                                <input type="radio" name="q<?= $index ?>" value="false" class="h-4 w-4 rounded border-white/30 bg-transparent text-brand-500 focus:ring-brand-500">
+                                                <span>False</span>
+                                            </label>
                                         <?php endif; ?>
                                         <input type="hidden" name="answer<?= $index ?>" value="<?= htmlspecialchars($term['term'] . '||' . $term['definition']) ?>">
                                     </div>
@@ -791,7 +1028,7 @@ function get_recent_sessions(int $setId): array
                                 <input type="hidden" name="set_id" value="<?= $set['id'] ?>">
                                 <input type="hidden" name="accuracy" id="test-accuracy" value="0">
                                 <input type="hidden" name="progress" id="test-progress" value="">
-                                <button class="px-4 py-2 bg-indigo-600 text-white rounded">Submit test</button>
+                                <button class="inline-flex items-center gap-2 rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-brand-500/40 transition hover:bg-brand-600">Submit test</button>
                             </form>
                             <script>
                                 document.getElementById('test-form').addEventListener('submit', function(event) {
@@ -819,26 +1056,26 @@ function get_recent_sessions(int $setId): array
                             </script>
                         <?php elseif ($page === 'match'): ?>
                             <div class="space-y-4">
-                                <p class="text-sm text-slate-600">Match each term to the correct definition as quickly as you can.</p>
-                                <button id="start-match" class="px-4 py-2 bg-indigo-600 text-white rounded">Start game</button>
-                                <div id="match-grid" class="grid md:grid-cols-4 gap-3"></div>
-                                <p id="match-timer" class="text-lg font-semibold"></p>
+                                <p class="text-sm text-slate-300">Match each term to the correct definition as quickly as you can.</p>
+                                <button id="start-match" class="inline-flex items-center gap-2 rounded-full bg-brand-500 px-5 py-2 text-sm font-semibold text-white shadow-brand-500/40 transition hover:bg-brand-600">Start game</button>
+                                <div id="match-grid" class="grid gap-3 md:grid-cols-4"></div>
+                                <p id="match-timer" class="text-lg font-semibold text-white"></p>
                                 <form method="post" class="hidden" id="match-form">
                                     <input type="hidden" name="action" value="record_match_score">
                                     <input type="hidden" name="set_id" value="<?= $set['id'] ?>">
                                     <input type="hidden" name="elapsed" id="match-elapsed">
                                 </form>
                                 <section class="mt-6">
-                                    <h3 class="font-semibold mb-2">Leaderboard</h3>
-                                    <div class="grid md:grid-cols-2 gap-3">
+                                    <h3 class="text-lg font-semibold text-white">Leaderboard</h3>
+                                    <div class="mt-3 grid gap-3 md:grid-cols-2">
                                         <?php
                                             $scores = $db->prepare('SELECT match_game_scores.*, users.display_name FROM match_game_scores JOIN users ON users.id = match_game_scores.user_id WHERE set_id = ? ORDER BY elapsed_seconds ASC LIMIT 10');
                                             $scores->execute([$set['id']]);
                                             foreach ($scores as $score):
                                         ?>
-                                            <div class="border rounded p-3 bg-slate-50">
-                                                <p class="font-semibold"><?= htmlspecialchars($score['display_name']) ?></p>
-                                                <p class="text-sm text-slate-500"><?= number_format($score['elapsed_seconds'], 1) ?> seconds</p>
+                                            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                                <p class="text-sm font-semibold text-white"><?= htmlspecialchars($score['display_name']) ?></p>
+                                                <p class="text-xs uppercase tracking-widest text-slate-400"><?= number_format($score['elapsed_seconds'], 1) ?> seconds</p>
                                             </div>
                                         <?php endforeach; ?>
                                     </div>
@@ -1106,59 +1343,65 @@ function get_recent_sessions(int $setId): array
                     }
                 </script>
             <?php elseif ($page === 'live'): ?>
-                <section class="grid lg:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-lg shadow p-6 space-y-4">
-                        <h2 class="text-xl font-semibold">Teacher live controls</h2>
+                <section class="grid gap-6 lg:grid-cols-2">
+                    <div class="<?= $cardClass ?> p-6 space-y-5">
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Live orchestration</p>
+                            <h2 class="font-display text-2xl font-semibold text-white">Teacher live controls</h2>
+                        </div>
                         <?php if (is_teacher()): ?>
-                            <form method="post" class="space-y-3">
+                            <form method="post" class="space-y-4">
                                 <input type="hidden" name="action" value="start_live">
                                 <div>
-                                    <label class="block text-sm font-medium">Study set</label>
-                                    <select name="set_id" class="w-full border rounded px-3 py-2">
+                                    <label class="<?= $labelClass ?>">Study set</label>
+                                    <select name="set_id" class="<?= $inputClass ?>">
                                         <?php foreach (get_sets_for_user($user) as $set): ?>
                                             <option value="<?= $set['id'] ?>"><?= htmlspecialchars($set['title']) ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
-                                <button class="px-4 py-2 bg-indigo-600 text-white rounded">Launch Live Game</button>
+                                <button class="<?= $primaryButton ?>">Launch live game</button>
                             </form>
                         <?php else: ?>
-                            <p class="text-sm text-slate-500">Only teachers can host live games. Join with a code below.</p>
+                            <p class="text-sm text-slate-300">Only teachers can host live games. Join with a code below.</p>
                         <?php endif; ?>
                         <div>
-                            <h3 class="font-semibold mt-4">Active live sessions</h3>
-                            <div class="space-y-2">
+                            <h3 class="mt-6 text-lg font-semibold text-white">Active live sessions</h3>
+                            <div class="mt-3 space-y-3">
                                 <?php
                                     $sessions = $db->query('SELECT live_sessions.*, study_sets.title, users.display_name FROM live_sessions JOIN study_sets ON study_sets.id = live_sessions.set_id JOIN users ON users.id = live_sessions.host_id WHERE status != "closed" ORDER BY created_at DESC LIMIT 10');
                                     foreach ($sessions as $session):
                                 ?>
-                                    <div class="border rounded p-3 bg-slate-50">
-                                        <p class="font-semibold"><?= htmlspecialchars($session['title']) ?></p>
-                                        <p class="text-sm text-slate-500">Host: <?= htmlspecialchars($session['display_name']) ?> · Code: <?= htmlspecialchars($session['code']) ?></p>
+                                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                        <p class="text-sm font-semibold text-white"><?= htmlspecialchars($session['title']) ?></p>
+                                        <p class="text-xs uppercase tracking-widest text-slate-400">Host: <?= htmlspecialchars($session['display_name']) ?> · Code: <?= htmlspecialchars($session['code']) ?></p>
                                     </div>
                                 <?php endforeach; ?>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-lg shadow p-6 space-y-4">
-                        <h2 class="text-xl font-semibold">Join a live session</h2>
-                        <form method="post" class="flex gap-3">
+                    <div class="<?= $cardClass ?> p-6 space-y-5">
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Participant access</p>
+                            <h2 class="font-display text-2xl font-semibold text-white">Join a live session</h2>
+                        </div>
+                        <form method="post" class="flex flex-col gap-3 sm:flex-row">
                             <input type="hidden" name="action" value="join_live">
-                            <input name="code" placeholder="Enter code" class="flex-1 border rounded px-3 py-2" required>
-                            <button class="px-4 py-2 bg-emerald-600 text-white rounded">Join</button>
+                            <input name="code" placeholder="Enter code" class="flex-1 <?= $inputClass ?>" required>
+                            <button class="<?= $successButton ?>">Join</button>
                         </form>
                         <div>
-                            <h3 class="font-semibold">Your live scores</h3>
-                            <div class="space-y-2">
+                            <h3 class="text-lg font-semibold text-white">Your live scores</h3>
+                            <div class="mt-3 space-y-3">
                                 <?php
                                     if ($user) {
                                         $liveScores = $db->prepare('SELECT live_participants.score, live_sessions.code, study_sets.title FROM live_participants JOIN live_sessions ON live_sessions.id = live_participants.live_session_id JOIN study_sets ON study_sets.id = live_sessions.set_id WHERE live_participants.user_id = ? ORDER BY live_participants.id DESC LIMIT 10');
                                         $liveScores->execute([$user['id']]);
                                         foreach ($liveScores as $score):
                                 ?>
-                                    <div class="border rounded p-3">
-                                        <p class="font-semibold"><?= htmlspecialchars($score['title']) ?></p>
-                                        <p class="text-sm text-slate-500">Score: <?= (int) $score['score'] ?> · Code: <?= htmlspecialchars($score['code']) ?></p>
+                                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                        <p class="text-sm font-semibold text-white"><?= htmlspecialchars($score['title']) ?></p>
+                                        <p class="text-xs uppercase tracking-widest text-slate-400">Score: <?= (int) $score['score'] ?> · Code: <?= htmlspecialchars($score['code']) ?></p>
                                     </div>
                                 <?php endforeach; } ?>
                             </div>
@@ -1166,72 +1409,75 @@ function get_recent_sessions(int $setId): array
                         <form method="post" class="space-y-3">
                             <input type="hidden" name="action" value="update_live_score">
                             <div>
-                                <label class="block text-sm font-medium">Session ID</label>
-                                <input name="session_id" class="w-full border rounded px-3 py-2">
+                                <label class="<?= $labelClass ?>">Session ID</label>
+                                <input name="session_id" class="<?= $inputClass ?>">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium">Score</label>
-                                <input name="score" class="w-full border rounded px-3 py-2">
+                                <label class="<?= $labelClass ?>">Score</label>
+                                <input name="score" class="<?= $inputClass ?>">
                             </div>
-                            <button class="px-4 py-2 bg-slate-800 text-white rounded">Update score</button>
+                            <button class="<?= $secondaryButton ?>">Update score</button>
                         </form>
                     </div>
                 </section>
             <?php elseif ($page === 'classes'): ?>
-                <section class="grid lg:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-lg shadow p-6 space-y-4">
-                        <h2 class="text-xl font-semibold">Classes</h2>
+                <section class="grid gap-6 lg:grid-cols-2">
+                    <div class="<?= $cardClass ?> p-6 space-y-5">
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Class management</p>
+                            <h2 class="font-display text-2xl font-semibold text-white">Classes</h2>
+                        </div>
                         <?php if (is_teacher()): ?>
-                            <form method="post" class="space-y-3">
+                            <form method="post" class="space-y-4">
                                 <input type="hidden" name="action" value="create_class">
                                 <div>
-                                    <label class="block text-sm font-medium">Class name</label>
-                                    <input name="name" class="w-full border rounded px-3 py-2" required>
+                                    <label class="<?= $labelClass ?>">Class name</label>
+                                    <input name="name" class="<?= $inputClass ?>" required>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium">Description</label>
-                                    <textarea name="description" class="w-full border rounded px-3 py-2"></textarea>
+                                    <label class="<?= $labelClass ?>">Description</label>
+                                    <textarea name="description" class="<?= $inputClass ?>"></textarea>
                                 </div>
-                                <button class="px-4 py-2 bg-indigo-600 text-white rounded">Create class</button>
+                                <button class="<?= $primaryButton ?>">Create class</button>
                             </form>
                         <?php endif; ?>
                         <div>
-                            <h3 class="font-semibold mt-4">Join a class</h3>
-                            <form method="post" class="flex gap-3">
+                            <h3 class="mt-6 text-lg font-semibold text-white">Join a class</h3>
+                            <form method="post" class="mt-3 flex flex-col gap-3 sm:flex-row">
                                 <input type="hidden" name="action" value="join_class">
-                                <input name="code" class="flex-1 border rounded px-3 py-2" placeholder="Join code" required>
-                                <button class="px-4 py-2 bg-emerald-600 text-white rounded">Join</button>
+                                <input name="code" class="flex-1 <?= $inputClass ?>" placeholder="Join code" required>
+                                <button class="<?= $successButton ?>">Join</button>
                             </form>
                         </div>
                         <div>
-                            <h3 class="font-semibold mt-4">Your classes</h3>
-                            <div class="space-y-3">
+                            <h3 class="mt-6 text-lg font-semibold text-white">Your classes</h3>
+                            <div class="mt-3 space-y-3">
                                 <?php foreach (get_classes_for_user($user) as $class): ?>
-                                    <details class="border rounded p-4 bg-slate-50">
-                                        <summary class="font-semibold"><?= htmlspecialchars($class['name']) ?> — Code: <?= htmlspecialchars($class['join_code']) ?></summary>
-                                        <p class="mt-2 text-sm text-slate-500"><?= htmlspecialchars($class['description']) ?></p>
-                                        <h4 class="mt-4 font-semibold">Members</h4>
-                                        <ul class="text-sm text-slate-600 space-y-1">
+                                    <details class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                        <summary class="cursor-pointer text-sm font-semibold text-white"><?= htmlspecialchars($class['name']) ?> — Code: <?= htmlspecialchars($class['join_code']) ?></summary>
+                                        <p class="mt-3 text-sm text-slate-200"><?= htmlspecialchars($class['description']) ?></p>
+                                        <h4 class="mt-4 text-sm font-semibold text-white">Members</h4>
+                                        <ul class="mt-2 space-y-1 text-sm text-slate-300">
                                             <?php foreach (get_class_members($class['id']) as $member): ?>
                                                 <li><?= htmlspecialchars($member['display_name']) ?> (<?= htmlspecialchars($member['class_role']) ?>)</li>
                                             <?php endforeach; ?>
                                         </ul>
-                                        <h4 class="mt-4 font-semibold">Assigned sets</h4>
-                                        <ul class="text-sm text-slate-600 space-y-1">
+                                        <h4 class="mt-4 text-sm font-semibold text-white">Assigned sets</h4>
+                                        <ul class="mt-2 space-y-1 text-sm">
                                             <?php foreach (get_class_assignments($class['id']) as $assigned): ?>
-                                                <li><a class="text-indigo-600" href="?page=set_view&amp;set_id=<?= $assigned['id'] ?>"><?= htmlspecialchars($assigned['title']) ?></a></li>
+                                                <li><a class="text-brand-200 transition hover:text-brand-100" href="?page=set_view&amp;set_id=<?= $assigned['id'] ?>"><?= htmlspecialchars($assigned['title']) ?></a></li>
                                             <?php endforeach; ?>
                                         </ul>
                                         <?php if (is_teacher()): ?>
-                                            <form method="post" class="mt-4 flex gap-3">
+                                            <form method="post" class="mt-4 flex flex-col gap-3 sm:flex-row">
                                                 <input type="hidden" name="action" value="assign_set">
                                                 <input type="hidden" name="class_id" value="<?= $class['id'] ?>">
-                                                <select name="set_id" class="flex-1 border rounded px-3 py-2">
+                                                <select name="set_id" class="flex-1 <?= $inputClass ?>">
                                                     <?php foreach (get_sets_for_user($user) as $set): ?>
                                                         <option value="<?= $set['id'] ?>"><?= htmlspecialchars($set['title']) ?></option>
                                                     <?php endforeach; ?>
                                                 </select>
-                                                <button class="px-4 py-2 bg-slate-800 text-white rounded">Assign set</button>
+                                                <button class="<?= $secondaryButton ?>">Assign set</button>
                                             </form>
                                         <?php endif; ?>
                                     </details>
@@ -1239,7 +1485,7 @@ function get_recent_sessions(int $setId): array
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-lg shadow p-6 space-y-4">
+                    <div class="<?= $cardClass ?> p-6 space-y-4">
                         <h2 class="text-xl font-semibold">Teacher analytics</h2>
                         <p class="text-sm text-slate-600">Monitor progress and engagement across your classes. Adaptive difficulty and game-based learning results flow into one dashboard.</p>
                         <div class="space-y-3">
@@ -1273,31 +1519,32 @@ function get_recent_sessions(int $setId): array
                     </div>
                 </section>
             <?php elseif ($page === 'analytics'): ?>
-                <section class="bg-white rounded-lg shadow p-6 space-y-6">
+                <section class="<?= $cardClass ?> p-6 space-y-6">
                     <div>
-                        <h2 class="text-2xl font-semibold">Learning analytics</h2>
-                        <p class="text-sm text-slate-600">Adaptive difficulty, study modes, and classroom assignments all roll up here. Monitor mastery and celebrate wins.</p>
+                        <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Insight dashboards</p>
+                        <h2 class="font-display text-3xl font-semibold text-white">Learning analytics</h2>
+                        <p class="mt-2 text-sm text-slate-300">Adaptive difficulty, study modes, and classroom assignments all roll up here. Monitor mastery and celebrate wins.</p>
                     </div>
-                    <div class="grid md:grid-cols-2 gap-4">
+                    <div class="grid gap-4 md:grid-cols-2">
                         <?php
                             $sessions = $db->prepare('SELECT study_sets.title, study_sessions.mode, study_sessions.accuracy, study_sessions.completed_at FROM study_sessions JOIN study_sets ON study_sets.id = study_sessions.set_id WHERE study_sessions.user_id = ? ORDER BY study_sessions.completed_at DESC LIMIT 12');
                             $sessions->execute([$user['id']]);
                             foreach ($sessions as $session):
                         ?>
-                            <div class="border rounded p-4 bg-slate-50">
-                                <h3 class="font-semibold"><?= htmlspecialchars($session['title']) ?></h3>
-                                <p class="text-sm text-slate-500">Mode: <?= htmlspecialchars(ucfirst($session['mode'])) ?> · Accuracy: <?= $session['accuracy'] ? number_format($session['accuracy'], 1) : 'N/A' ?>%</p>
-                                <p class="text-xs text-slate-400">Completed: <?= htmlspecialchars($session['completed_at']) ?></p>
+                            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                <h3 class="text-sm font-semibold text-white"><?= htmlspecialchars($session['title']) ?></h3>
+                                <p class="mt-2 text-xs uppercase tracking-widest text-slate-400">Mode: <?= htmlspecialchars(ucfirst($session['mode'])) ?> · Accuracy: <?= $session['accuracy'] ? number_format($session['accuracy'], 1) : 'N/A' ?>%</p>
+                                <p class="text-xs text-slate-500">Completed: <?= htmlspecialchars($session['completed_at']) ?></p>
                             </div>
                         <?php endforeach; ?>
                         <?php if (!$sessions->rowCount()): ?>
-                            <p class="text-sm text-slate-500">No study sessions recorded yet.</p>
+                            <p class="rounded-2xl border border-dashed border-white/20 p-4 text-sm text-slate-400">No study sessions recorded yet. Complete a study mode to populate analytics.</p>
                         <?php endif; ?>
                     </div>
                     <div>
-                        <h3 class="text-xl font-semibold mb-2">Mastery spotlight</h3>
-                        <p class="text-sm text-slate-600">Learn mode tracks attempts and successes for each term. Review the JSON snapshot below for coaching conversations.</p>
-                        <pre class="bg-slate-900 text-lime-200 p-4 rounded overflow-x-auto text-xs"><?php
+                        <h3 class="text-xl font-semibold text-white">Mastery spotlight</h3>
+                        <p class="mt-2 text-sm text-slate-300">Learn mode tracks attempts and successes for each term. Review the JSON snapshot below for coaching conversations.</p>
+                        <pre class="mt-4 max-h-64 overflow-x-auto rounded-2xl border border-white/10 bg-slate-950/80 p-4 text-xs text-lime-200"><?php
                             $snapshot = $db->prepare('SELECT study_sets.title, study_sessions.mode, study_sessions.progress_json FROM study_sessions JOIN study_sets ON study_sets.id = study_sessions.set_id WHERE study_sessions.user_id = ? ORDER BY study_sessions.completed_at DESC LIMIT 1');
                             $snapshot->execute([$user['id']]);
                             $data = $snapshot->fetch(PDO::FETCH_ASSOC);
@@ -1306,38 +1553,41 @@ function get_recent_sessions(int $setId): array
                     </div>
                 </section>
             <?php elseif ($page === 'import'): ?>
-                <section class="bg-white rounded-lg shadow p-6 space-y-4">
-                    <h2 class="text-2xl font-semibold">Bulk import tools</h2>
-                    <p class="text-sm text-slate-600">Paste vocabulary lists, upload CSV files, and generate terms in seconds. Great for teachers prepping large classes.</p>
-                    <form method="post" enctype="multipart/form-data" class="space-y-3">
+                <section class="<?= $cardClass ?> p-6 space-y-6">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Rapid authoring</p>
+                        <h2 class="font-display text-3xl font-semibold text-white">Bulk import tools</h2>
+                        <p class="mt-2 text-sm text-slate-300">Paste vocabulary lists, upload CSV files, and generate terms in seconds. Perfect for prepping large classes.</p>
+                    </div>
+                    <form method="post" enctype="multipart/form-data" class="space-y-4">
                         <input type="hidden" name="action" value="import_terms">
                         <div>
-                            <label class="block text-sm font-medium">Study set</label>
-                            <select name="set_id" class="w-full border rounded px-3 py-2">
+                            <label class="<?= $labelClass ?>">Study set</label>
+                            <select name="set_id" class="<?= $inputClass ?>">
                                 <?php foreach (get_sets_for_user($user) as $set): ?>
                                     <option value="<?= $set['id'] ?>"><?= htmlspecialchars($set['title']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium">Paste list (term, definition)</label>
-                            <textarea name="import_text" rows="6" class="w-full border rounded px-3 py-2" placeholder="water, H2O"></textarea>
+                            <label class="<?= $labelClass ?>">Paste list (term, definition)</label>
+                            <textarea name="import_text" rows="6" class="<?= $inputClass ?>" placeholder="water, H2O"></textarea>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium">Upload CSV / TSV</label>
-                            <input type="file" name="import_file" accept=".csv,.tsv,text/csv,text/tab-separated-values" class="w-full border rounded px-3 py-2">
+                            <label class="<?= $labelClass ?>">Upload CSV / TSV</label>
+                            <input type="file" name="import_file" accept=".csv,.tsv,text/csv,text/tab-separated-values" class="<?= $inputClass ?>">
                         </div>
-                        <button class="px-4 py-2 bg-indigo-600 text-white rounded">Import</button>
+                        <button class="<?= $primaryButton ?>">Import</button>
                     </form>
                     <div>
-                        <h3 class="text-xl font-semibold mt-4">Import history</h3>
-                        <ul class="space-y-2 text-sm text-slate-600">
+                        <h3 class="mt-6 text-xl font-semibold text-white">Import history</h3>
+                        <ul class="mt-3 space-y-2 text-sm text-slate-300">
                             <?php
                                 $imports = $db->prepare('SELECT * FROM imports WHERE user_id = ? ORDER BY imported_at DESC LIMIT 10');
                                 $imports->execute([$user['id']]);
                                 foreach ($imports as $row):
                             ?>
-                                <li class="border rounded p-3 bg-slate-50">Uploaded <?= htmlspecialchars($row['original_filename']) ?> — <?= htmlspecialchars($row['imported_at']) ?></li>
+                                <li class="rounded-2xl border border-white/10 bg-white/5 p-4">Uploaded <?= htmlspecialchars($row['original_filename']) ?> — <?= htmlspecialchars($row['imported_at']) ?></li>
                             <?php endforeach; ?>
                         </ul>
                     </div>
